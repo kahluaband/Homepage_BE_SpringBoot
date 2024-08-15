@@ -215,7 +215,7 @@ public class TicketService {
         }
         // sortBy 값이 없다면 결제 상태에 따라, 최신순으로 정렬
         else {
-            tickets = ticketRepository.findAllOrderByStatus();
+            tickets = ticketRepository.findAllByTypeOrderByStatus(Type.GENERAL);
         }
 
         List<TicketItemResponse> ticketItemResponses = new ArrayList<>();
@@ -269,7 +269,7 @@ public class TicketService {
         }
         // sortBy 값이 없다면 결제 상태에 따라, 최신순으로 정렬
         else {
-            tickets = ticketRepository.findAllOrderByStatus();
+            tickets = ticketRepository.findAllByTypeOrderByStatus(Type.FRESHMAN);
         }
 
         List<TicketItemResponse> ticketItemResponses = new ArrayList<>();

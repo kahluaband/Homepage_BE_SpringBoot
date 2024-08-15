@@ -63,7 +63,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:8080", "http://kahluaband.com", "https://kahluaband.com", "http://localhost:3000"));
+        config.setAllowedOrigins(List.of("http://localhost:8080", "http://kahluaband.com", "https://kahluaband.com", "http://localhost:3000", "https://kahluabandver20-caminobelllos-projects.vercel.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
