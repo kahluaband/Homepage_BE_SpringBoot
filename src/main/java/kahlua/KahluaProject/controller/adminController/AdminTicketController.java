@@ -10,9 +10,14 @@ import kahlua.KahluaProject.security.AuthDetails;
 import kahlua.KahluaProject.service.ExcelConvertService;
 import kahlua.KahluaProject.service.TicketService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 @Tag(name = "관리자(예매하기)", description = "관리자(예매하기) 페이지 관련 API")
@@ -66,7 +71,15 @@ public class AdminTicketController {
     }
 
     @GetMapping("/download")
-    public void applyListToExcel(HttpServletResponse response) throws IOException {
-        excelConvertService.ticketListToExcel(response);
+    @Operation(summary = "티켓 리스트 엑셀 변환", description = "전체 티켓 리스트를 엑셀 파일로 변환하여 다운로드합니다.")
+    public ResponseEntity<InputStreamResource> applyListToExcel() throws IOException {
+        ByteArrayInputStream in = excelConvertService.ticketListToExcel();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=tickets.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(new InputStreamResource(in));
     }
 }

@@ -13,6 +13,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -24,9 +26,11 @@ public class ExcelConvertService {
     private final TicketRepository ticketRepository;
     private final ParticipantsRepository participantsRepository;
 
-    public void applyListToExcel(HttpServletResponse response) throws IOException {
+    public ByteArrayInputStream applyListToExcel() throws IOException {
         // 엑셀 파일 생성
         XSSFWorkbook workbook = new XSSFWorkbook();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
         Sheet sheet = workbook.createSheet("지원자");
 
         // 헤더 작성
@@ -69,18 +73,17 @@ public class ExcelConvertService {
 
         }
 
-        // 파일 다운로드를 위한 HTTP 응답 설정
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=applicants.xlsx");
-
-        // 엑셀 파일을 HTTP 응답으로 전송
-        workbook.write(response.getOutputStream());
+        workbook.write(out);
         workbook.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
 
-    public void ticketListToExcel(HttpServletResponse response) throws IOException {
+    public ByteArrayInputStream ticketListToExcel() throws IOException {
         // 엑셀 파일 생성
         XSSFWorkbook workbook = new XSSFWorkbook();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
         Sheet sheet = workbook.createSheet("전체");
 
         // 헤더 작성
@@ -117,12 +120,9 @@ public class ExcelConvertService {
             }
         }
 
-        // 파일 다운로드를 위한 HTTP 응답 설정
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=tickets.xlsx");
-
-        // 엑셀 파일을 HTTP 응답으로 전송
-        workbook.write(response.getOutputStream());
+        workbook.write(out);
         workbook.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
 }

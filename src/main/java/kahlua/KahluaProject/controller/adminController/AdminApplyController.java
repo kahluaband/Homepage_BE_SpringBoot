@@ -15,9 +15,14 @@ import kahlua.KahluaProject.security.AuthDetails;
 import kahlua.KahluaProject.service.ApplyService;
 import kahlua.KahluaProject.service.ExcelConvertService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 @Tag(name = "관리자(지원하기)", description = "관리자(지원하기) 페이지 관련 API")
@@ -54,7 +59,15 @@ public class AdminApplyController {
     }
 
     @GetMapping("/download")
-    public void applyListToExcel(HttpServletResponse response) throws IOException {
-        excelConvertService.applyListToExcel(response);
+    @Operation(summary = "지원자 리스트 엑셀 변환", description = "전체 지원자 리스트를 엑셀 파일로 변환하여 다운로드합니다.")
+    public ResponseEntity<InputStreamResource> applyListToExcel() throws IOException {
+        ByteArrayInputStream in = excelConvertService.applyListToExcel();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=applicants.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(new InputStreamResource(in));
     }
 }
