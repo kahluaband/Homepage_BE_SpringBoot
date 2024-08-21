@@ -2,14 +2,18 @@ package kahlua.KahluaProject.controller.adminController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import kahlua.KahluaProject.apipayload.ApiResponse;
 import kahlua.KahluaProject.dto.ticket.response.TicketListResponse;
 import kahlua.KahluaProject.dto.ticket.response.TicketUpdateResponse;
 import kahlua.KahluaProject.security.AuthDetails;
+import kahlua.KahluaProject.service.ExcelConvertService;
 import kahlua.KahluaProject.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Tag(name = "관리자(예매하기)", description = "관리자(예매하기) 페이지 관련 API")
 @RestController
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminTicketController {
 
     private final TicketService ticketService;
+    private final ExcelConvertService excelConvertService;
 
     @GetMapping
     @Operation(summary = "전체 티켓 리스트 조회", description = "sort-by에 정의된 티켓 속성 기준으로 정렬된 전체 티켓 리스트를 조회합니다 " +
@@ -58,5 +63,10 @@ public class AdminTicketController {
     public ApiResponse<TicketUpdateResponse> completeCancelForm(@PathVariable(name = "ticketId") Long ticketId, @AuthenticationPrincipal AuthDetails authDetails) {
         TicketUpdateResponse ticketUpdateResponse = ticketService.completeCancelTicket(authDetails.user(), ticketId);
         return ApiResponse.onSuccess(ticketUpdateResponse);
+    }
+
+    @GetMapping("/download")
+    public void applyListToExcel(HttpServletResponse response) throws IOException {
+        excelConvertService.ticketListToExcel(response);
     }
 }

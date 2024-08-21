@@ -2,7 +2,10 @@ package kahlua.KahluaProject.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kahlua.KahluaProject.domain.apply.Apply;
+import kahlua.KahluaProject.domain.ticket.Ticket;
+import kahlua.KahluaProject.domain.ticket.Type;
 import kahlua.KahluaProject.repository.ApplyRepository;
+import kahlua.KahluaProject.repository.ParticipantsRepository;
 import kahlua.KahluaProject.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -19,6 +22,7 @@ public class ExcelConvertService {
 
     private final ApplyRepository applyRepository;
     private final TicketRepository ticketRepository;
+    private final ParticipantsRepository participantsRepository;
 
     public void applyListToExcel(HttpServletResponse response) throws IOException {
         // 엑셀 파일 생성
@@ -32,7 +36,7 @@ public class ExcelConvertService {
         headerRow.createCell(2).setCellValue("생년월일");
         headerRow.createCell(3).setCellValue("전화번호");
         headerRow.createCell(4).setCellValue("주소");
-        headerRow.createCell(5).setCellValue("전공");
+        headerRow.createCell(5).setCellValue("학과");
         headerRow.createCell(6).setCellValue("1지망");
         headerRow.createCell(7).setCellValue("2지망");
         headerRow.createCell(8).setCellValue("깔루아 지원 동기");
@@ -67,7 +71,55 @@ public class ExcelConvertService {
 
         // 파일 다운로드를 위한 HTTP 응답 설정
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=지원자 리스트.xlsx");
+        response.setHeader("Content-Disposition", "attachment; filename=applicants.xlsx");
+
+        // 엑셀 파일을 HTTP 응답으로 전송
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+    public void ticketListToExcel(HttpServletResponse response) throws IOException {
+        // 엑셀 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("전체");
+
+        // 헤더 작성
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("티켓 유형");
+        headerRow.createCell(1).setCellValue("상태");
+        headerRow.createCell(2).setCellValue("예매 번호");
+        headerRow.createCell(3).setCellValue("예매자 이름");
+        headerRow.createCell(4).setCellValue("예매자 전화번호");
+        headerRow.createCell(5).setCellValue("매수");
+        headerRow.createCell(6).setCellValue("학과(신입생)");
+        headerRow.createCell(7).setCellValue("학번(신입생)");
+        headerRow.createCell(8).setCellValue("뒷풀이 참석 여부(신입생)");
+
+        // 데이터 작성
+        List<Ticket> tickets = ticketRepository.findAllOrderByStatus();
+        int rowIndex = 1;
+        for (Ticket ticket : tickets) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(ticket.getType().toString());
+            row.createCell(1).setCellValue(ticket.getStatus().toString());
+            row.createCell(2).setCellValue(ticket.getReservationId());
+            row.createCell(3).setCellValue(ticket.getBuyer());
+            row.createCell(4).setCellValue(ticket.getPhone_num());
+
+            if (ticket.getType().equals(Type.GENERAL)) {
+                row.createCell(5).setCellValue(participantsRepository.countByTicket_Id(ticket.getId()) + 1);
+            }
+            if (ticket.getType().equals(Type.FRESHMAN)) {
+                row.createCell(5).setCellValue(1);
+                row.createCell(6).setCellValue(ticket.getMajor());
+                row.createCell(7).setCellValue(ticket.getStudentId());
+                row.createCell(8).setCellValue(ticket.getMeeting().toString());;
+            }
+        }
+
+        // 파일 다운로드를 위한 HTTP 응답 설정
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=tickets.xlsx");
 
         // 엑셀 파일을 HTTP 응답으로 전송
         workbook.write(response.getOutputStream());
