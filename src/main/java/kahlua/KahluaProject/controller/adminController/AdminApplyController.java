@@ -2,6 +2,7 @@ package kahlua.KahluaProject.controller.adminController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import kahlua.KahluaProject.apipayload.ApiResponse;
 import kahlua.KahluaProject.apipayload.code.status.ErrorStatus;
 import kahlua.KahluaProject.domain.apply.Preference;
@@ -12,9 +13,12 @@ import kahlua.KahluaProject.dto.apply.response.ApplyListResponse;
 import kahlua.KahluaProject.exception.GeneralException;
 import kahlua.KahluaProject.security.AuthDetails;
 import kahlua.KahluaProject.service.ApplyService;
+import kahlua.KahluaProject.service.ExcelConvertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Tag(name = "관리자(지원하기)", description = "관리자(지원하기) 페이지 관련 API")
 @RestController
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminApplyController {
 
     private final ApplyService applyService;
+    private final ExcelConvertService excelConvertService;
 
     @GetMapping("/all")
     @Operation(summary = "지원자 리스트 조회", description = "id 기준으로 정렬된 지원자 리스트를 조회합니다")
@@ -46,5 +51,10 @@ public class AdminApplyController {
     public ApiResponse<ApplyListResponse> getApplyListByPreference(@AuthenticationPrincipal AuthDetails authDetails, @RequestParam(name = "preference") Preference preference) {
         ApplyListResponse applyListResponse = applyService.getApplyListByPreference(authDetails.user(), preference);
         return ApiResponse.onSuccess(applyListResponse);
+    }
+
+    @GetMapping("/download")
+    public void applyListToExcel(HttpServletResponse response) throws IOException {
+        excelConvertService.applyListToExcel(response);
     }
 }

@@ -1,0 +1,76 @@
+package kahlua.KahluaProject.service;
+
+import jakarta.servlet.http.HttpServletResponse;
+import kahlua.KahluaProject.domain.apply.Apply;
+import kahlua.KahluaProject.repository.ApplyRepository;
+import kahlua.KahluaProject.repository.ticket.TicketRepository;
+import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ExcelConvertService {
+
+    private final ApplyRepository applyRepository;
+    private final TicketRepository ticketRepository;
+
+    public void applyListToExcel(HttpServletResponse response) throws IOException {
+        // 엑셀 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("지원자");
+
+        // 헤더 작성
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("이름");
+        headerRow.createCell(1).setCellValue("성별");
+        headerRow.createCell(2).setCellValue("생년월일");
+        headerRow.createCell(3).setCellValue("전화번호");
+        headerRow.createCell(4).setCellValue("주소");
+        headerRow.createCell(5).setCellValue("전공");
+        headerRow.createCell(6).setCellValue("1지망");
+        headerRow.createCell(7).setCellValue("2지망");
+        headerRow.createCell(8).setCellValue("깔루아 지원 동기");
+        headerRow.createCell(9).setCellValue("지원 세션에 대한 경력 및 지원 이유");
+        headerRow.createCell(10).setCellValue("이외에 다룰 줄 아는 악기");
+        headerRow.createCell(11).setCellValue("포부 및 각오");
+        headerRow.createCell(12).setCellValue("3월 18일 스케쥴");
+        headerRow.createCell(13).setCellValue("면접 후 뒷풀이 참석 여부");
+
+        // 데이터 작성
+        List<Apply> applies = applyRepository.findAll();
+        int rowIndex = 1;
+        for (Apply apply : applies) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(apply.getName());
+            row.createCell(1).setCellValue(apply.getGender().toString());
+            row.createCell(2).setCellValue(apply.getBirth_date());
+            row.createCell(3).setCellValue(apply.getPhoneNum());
+            row.createCell(4).setCellValue(apply.getAddress());
+            row.createCell(5).setCellValue(apply.getMajor());
+            row.createCell(6).setCellValue(apply.getFirstPreference().toString());
+            row.createCell(7).setCellValue(apply.getSecondPreference().toString());
+            row.createCell(8).setCellValue(apply.getMotive());
+            row.createCell(9).setCellValue(apply.getExperience_and_reason());
+            row.createCell(10).setCellValue(apply.getPlay_instrument());
+            row.createCell(11).setCellValue(apply.getReadiness());
+            row.createCell(12).setCellValue(apply.getFinish_time());
+            row.createCell(13).setCellValue(apply.getMeeting());
+
+
+        }
+
+        // 파일 다운로드를 위한 HTTP 응답 설정
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=지원자 리스트.xlsx");
+
+        // 엑셀 파일을 HTTP 응답으로 전송
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+}
