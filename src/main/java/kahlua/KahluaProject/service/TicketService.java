@@ -30,6 +30,7 @@ public class TicketService {
 
     private final TicketRepository ticketRepository;
     private final ParticipantsRepository participantsRepository;
+    private final MailService mailService;
 
     @Transactional
     public TicketCreateResponse createTicket(TicketCreateRequest ticketCreateRequest) {
@@ -74,6 +75,9 @@ public class TicketService {
         Ticket updatedTicket = ticketRepository.save(existingTicket);
 
         TicketUpdateResponse ticketUpdateResponse = TicketConverter.toTicketUpdateResponse(updatedTicket);
+
+        mailService.sendEmail(updatedTicket.getEmail()); // 티켓 구매자에게 결제 완료 확인 메일 발송
+
         return ticketUpdateResponse;
 
     }

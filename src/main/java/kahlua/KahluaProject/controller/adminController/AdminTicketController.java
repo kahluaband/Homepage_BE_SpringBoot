@@ -57,7 +57,8 @@ public class AdminTicketController {
     }
 
     @PatchMapping("/{ticketId}/ticket-complete")
-    @Operation(summary = "티켓 결제 완료", description = "티켓 결제를 완료한 뒤 어드민 페이지에서 결제 완료를 클릭하는 경우 결제 완료로 상태가 변합니다.")
+    @Operation(summary = "티켓 결제 완료", description = "티켓 결제를 완료한 뒤 어드민 페이지에서 결제 완료를 클릭하는 경우 결제 완료로 상태가 변합니다." +
+            "</br> 추가적으로 티켓 구매자에게 결제 완료 확인 메일을 발송합니다.")
     public ApiResponse<TicketUpdateResponse> completePaymentForm(@PathVariable(name = "ticketId") Long ticketId, @AuthenticationPrincipal AuthDetails authDetails) {
         TicketUpdateResponse ticketUpdateResponse = ticketService.completePayment(authDetails.user(), ticketId);
         return ApiResponse.onSuccess(ticketUpdateResponse);
