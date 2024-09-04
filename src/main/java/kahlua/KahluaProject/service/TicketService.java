@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import kahlua.KahluaProject.apipayload.code.status.ErrorStatus;
 import kahlua.KahluaProject.converter.TicketConverter;
 import kahlua.KahluaProject.domain.ticket.Participants;
+import kahlua.KahluaProject.domain.ticket.Status;
 import kahlua.KahluaProject.domain.ticket.Ticket;
 import kahlua.KahluaProject.domain.ticket.Type;
 import kahlua.KahluaProject.domain.user.User;
@@ -327,12 +328,14 @@ public class TicketService {
         return String.join("", idList);
     }
 
-    // 티켓 매수 count - 일반 티켓 리스트 조회에 사용
+    // 티켓 매수 count - 티켓 리스트 조회에 사용
     public Integer countTickets(List<TicketItemResponse> ticketItemResponses) {
 
         Integer total = 0;
         for (TicketItemResponse ticketItemResponse : ticketItemResponses) {
-            total += ticketItemResponse.getTotal_ticket();
+            if (ticketItemResponse.getStatus() != Status.CANCEL_COMPLETE) {
+                total += ticketItemResponse.getTotal_ticket();
+            }
         }
 
         return total;
