@@ -82,4 +82,17 @@ public class AdminTicketController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(new InputStreamResource(in));
     }
+
+    @GetMapping("/participants/download")
+    @Operation(summary = "참석자 리스트 엑셀 변환", description = "전체 참석자 리스트를 엑셀 파일로 변환하여 다운로드합니다.")
+    public ResponseEntity<InputStreamResource> participantsListToExcel() throws IOException {
+        ByteArrayInputStream in = excelConvertService.participantListToExcel();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=participants.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(new InputStreamResource(in));
+    }
 }

@@ -1,9 +1,12 @@
 package kahlua.KahluaProject.service;
 
 import jakarta.servlet.http.HttpServletResponse;
+import kahlua.KahluaProject.apipayload.code.status.ErrorStatus;
 import kahlua.KahluaProject.domain.apply.Apply;
+import kahlua.KahluaProject.domain.ticket.Participants;
 import kahlua.KahluaProject.domain.ticket.Ticket;
 import kahlua.KahluaProject.domain.ticket.Type;
+import kahlua.KahluaProject.exception.GeneralException;
 import kahlua.KahluaProject.repository.ApplyRepository;
 import kahlua.KahluaProject.repository.ParticipantsRepository;
 import kahlua.KahluaProject.repository.ticket.TicketRepository;
@@ -118,6 +121,39 @@ public class ExcelConvertService {
                 row.createCell(7).setCellValue(ticket.getStudentId());
                 row.createCell(8).setCellValue(ticket.getMeeting().toString());;
             }
+        }
+
+        workbook.write(out);
+        workbook.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    public ByteArrayInputStream participantListToExcel() throws IOException {
+        // 엑셀 파일 생성
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        Sheet sheet = workbook.createSheet("참석자");
+
+        // 헤더 작성
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("참석자 이름");
+        headerRow.createCell(1).setCellValue("참석자 전화번호");
+        headerRow.createCell(2).setCellValue("예매자 이름");
+
+        // 데이터 작성
+        List<Participants> participantsList = participantsRepository.findAll();
+        int rowIndex = 1;
+        for (Participants participants : participantsList) {
+
+            Ticket ticket = ticketRepository.findById(participants.getTicket().getId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.TICKET_NOT_FOUND));
+
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(participants.getName());
+            row.createCell(1).setCellValue(participants.getPhone_num());
+            row.createCell(2).setCellValue(ticket.getBuyer());
         }
 
         workbook.write(out);
