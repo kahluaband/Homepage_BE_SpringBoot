@@ -57,6 +57,13 @@ dependencies {
 	// POI
 	implementation group: 'org.apache.poi', name: 'poi', version: '5.3.0'
 	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.3.0'
+
+	// Mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	// Thymeleaf (for mail service)
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 }
 
 tasks.named('test') {
