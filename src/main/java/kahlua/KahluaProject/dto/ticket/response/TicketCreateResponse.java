@@ -45,4 +45,7 @@ public class TicketCreateResponse {
 
     @Schema(description = "티켓 상태")
     private Status status;
+
+    @Schema(description = "구매자 이메일")
+    private String email;
 }

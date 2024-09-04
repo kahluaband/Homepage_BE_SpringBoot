@@ -44,6 +44,8 @@ public class Ticket extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;  // 결제 상태 (대기, 종료, 취소 요청, 취소 완료)
 
+    private String email; // 구매자 이메일 (결제 완료 메일 발송에 사용)
+
     @PrePersist
     public void onCreate() {
         if (status == null && type == GENERAL) {

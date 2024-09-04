@@ -34,4 +34,7 @@ public class TicketCreateRequest {
 
     @Schema(description = "참석자 정보")
     private List<ParticipantsCreateRequest> members;
+
+    @Schema(description = "구매자 이메일")
+    private String email;
 }
