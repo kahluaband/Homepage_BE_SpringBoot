@@ -1,6 +1,11 @@
 package kahlua.KahluaProject.service;
 
 import jakarta.mail.internet.MimeMessage;
+import kahlua.KahluaProject.apipayload.code.status.ErrorStatus;
+import kahlua.KahluaProject.domain.apply.Apply;
+import kahlua.KahluaProject.domain.apply.Preference;
+import kahlua.KahluaProject.exception.GeneralException;
+import kahlua.KahluaProject.repository.ApplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,13 +26,14 @@ public class MailService {
     private final SpringTemplateEngine templateEngine;
 
     @Async
-    public void sendEmail(String email){
+    public void sendApplicantEmail(Apply apply){
+
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            mimeMessageHelper.setTo(email); // 메일 수신자
+            mimeMessageHelper.setTo(apply.getEmail()); // 메일 수신자
             mimeMessageHelper.setSubject("kahluaband.com 에서 발송한 메일입니다."); // 메일 제목
-            mimeMessageHelper.setText(setContext(), true); // 메일 본문 내용, HTML 여부
+            mimeMessageHelper.setText(setApplicantContext(apply), true); // 메일 본문 내용, HTML 여부
             javaMailSender.send(mimeMessage);
 
             log.info("Succeeded to send Email");
@@ -38,8 +44,17 @@ public class MailService {
     }
 
     // thymeleaf를 통한 html 적용
-    public String setContext() {
+    public String setApplicantContext(Apply apply) {
+
         Context context = new Context();
-        return templateEngine.process("test", context);
+        context.setVariable("name", apply.getName());
+        context.setVariable("phoneNum", apply.getPhoneNum());
+
+        if (apply.getFirstPreference() == Preference.VOCAL) {
+            return templateEngine.process("applicantVocal", context);
+        }
+        else {
+            return templateEngine.process("applicantOther", context);
+        }
     }
 }

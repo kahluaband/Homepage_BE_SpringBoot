@@ -22,6 +22,7 @@ import java.util.List;
 public class ApplyService {
 
     private final ApplyRepository applyRepository;
+    private final MailService mailService;
 
     @Transactional
     public ApplyCreateResponse createApply(ApplyCreateRequest applyCreateRequest) {
@@ -33,7 +34,10 @@ public class ApplyService {
         Apply apply = ApplyConverter.toApply(applyCreateRequest);
         applyRepository.save(apply);
 
+        mailService.sendApplicantEmail(apply); // 보컬과 나머지 세션으로 구분하여 지원 확인 메일 발송
+
         ApplyCreateResponse applyCreateResponse = ApplyConverter.toApplyCreateResponse(apply);
+
         return applyCreateResponse;
     }
 
