@@ -24,6 +24,7 @@ public class ApplyConverter {
                 .finish_time(applyCreateRequest.getFinish_time())
                 .meeting(applyCreateRequest.getMeeting())
                 .readiness(applyCreateRequest.getReadiness())
+                .email(applyCreateRequest.getEmail())
                 .build();
     }
 
@@ -44,6 +45,7 @@ public class ApplyConverter {
                 .finish_time(apply.getFinish_time())
                 .meeting(apply.getMeeting())
                 .readiness(apply.getReadiness())
+                .email(apply.getEmail())
                 .build();
     }
 

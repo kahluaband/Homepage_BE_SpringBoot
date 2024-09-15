@@ -31,4 +31,5 @@ public class ApplyCreateRequest {
     private String finish_time;
     private Boolean meeting;
     private String readiness;
+    private String email;
 }

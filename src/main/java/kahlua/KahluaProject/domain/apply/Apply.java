@@ -53,4 +53,6 @@ public class Apply extends BaseEntity{
     private Boolean meeting;
 
     private String readiness;
+
+    private String email; // 지원자 이메일 (지원 확인 메일 발송에 사용)
 }
