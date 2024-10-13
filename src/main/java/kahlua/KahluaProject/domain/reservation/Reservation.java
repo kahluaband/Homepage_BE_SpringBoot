@@ -30,6 +30,10 @@ public class Reservation extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reservation_type", nullable = false)
+    private ReservationType type; // 개인, 팀 구분
+
     @Column(name = "club_room_username")
     private String clubRoomUsername; // 동방 예약자명(팀명)
 
