@@ -1,16 +1,11 @@
-package kahlua.KahluaProject.vo;
+package kahlua.KahluaProject.dto.applyInfo.request;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record ApplyInfoData(
+public record ApplyInfoRequest(
         @Schema(description = "기수", example = "23")
         String term,
 
@@ -49,4 +44,5 @@ public record ApplyInfoData(
 
         @Schema(description = "활동 설명")
         String activityDescription
-) {}
+) {
+}

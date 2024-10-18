@@ -1,4 +1,4 @@
-package kahlua.KahluaProject.vo;
+package kahlua.KahluaProject.dto.ticketInfo.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -9,7 +9,14 @@ import java.time.LocalDateTime;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record TicketInfoData(
+public record TicketInfoResponse(
+
+        @Schema(description = "아이디", example = "1")
+        Long id,
+
+        @Schema(description = "공연 포스터 이미지", example = "https://kahlua.com/1.jpg")
+        String posterImageUrl,
+
         @Schema(description = "공연 제목", example = "2024년 3월 정기 공연")
         String title,
 

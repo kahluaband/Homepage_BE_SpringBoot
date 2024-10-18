@@ -5,12 +5,17 @@ import kahlua.KahluaProject.apipayload.code.status.ErrorStatus;
 import kahlua.KahluaProject.converter.ApplyConverter;
 import kahlua.KahluaProject.domain.apply.Apply;
 import kahlua.KahluaProject.domain.apply.Preference;
+import kahlua.KahluaProject.domain.applyInfo.ApplyInfo;
 import kahlua.KahluaProject.domain.user.User;
 import kahlua.KahluaProject.domain.user.UserType;
 import kahlua.KahluaProject.dto.apply.request.ApplyCreateRequest;
 import kahlua.KahluaProject.dto.apply.response.*;
+import kahlua.KahluaProject.dto.applyInfo.request.ApplyInfoRequest;
+import kahlua.KahluaProject.dto.applyInfo.response.ApplyInfoResponse;
 import kahlua.KahluaProject.exception.GeneralException;
+import kahlua.KahluaProject.repository.ApplyInfoRepository;
 import kahlua.KahluaProject.repository.ApplyRepository;
+import kahlua.KahluaProject.vo.ApplyInfoData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +28,7 @@ public class ApplyService {
 
     private final ApplyRepository applyRepository;
     private final MailService mailService;
+    private final ApplyInfoRepository applyInfoRepository;
 
     @Transactional
     public ApplyCreateResponse createApply(ApplyCreateRequest applyCreateRequest) {
@@ -142,5 +148,24 @@ public class ApplyService {
                 .build();
 
         return applyListResponse;
+    }
+
+    public ApplyInfoResponse updateApplyInfo(Long applyInfoId, ApplyInfoRequest applyInfoRequest, User user) {
+        //validation: applyId 유효성, 관리자 권한 확인
+        ApplyInfo applyInfo = applyInfoRepository.findById(applyInfoId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.APPLY_INFO_NOT_FOUND));
+
+        if(user.getUserType() != UserType.ADMIN){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+
+        //business logic: applyInfo 데이터 변환 및 변경사항 업데이트
+        ApplyInfoData applyInfodata = ApplyConverter.toApplyInfo(applyInfoRequest);
+        applyInfo.update(applyInfodata);
+
+        applyInfoRepository.save(applyInfo);
+
+        //return: ApplyInfoResponse 타입으로 변환 후 반환
+        return ApplyConverter.toApplyInfoResponse(applyInfo);
     }
 }

@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import kahlua.KahluaProject.apipayload.ApiResponse;
 import kahlua.KahluaProject.dto.ticket.response.TicketListResponse;
 import kahlua.KahluaProject.dto.ticket.response.TicketUpdateResponse;
+import kahlua.KahluaProject.dto.ticketInfo.request.TicketInfoRequest;
+import kahlua.KahluaProject.dto.ticketInfo.response.TicketInfoResponse;
 import kahlua.KahluaProject.security.AuthDetails;
 import kahlua.KahluaProject.service.ExcelConvertService;
 import kahlua.KahluaProject.service.TicketService;
@@ -95,5 +97,11 @@ public class AdminTicketController {
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(new InputStreamResource(in));
+    }
+
+    @PutMapping("/{ticket_info_id}")
+    @Operation(summary = "티켓 정보 수정", description = "티켓 정보를 수정합니다")
+    public ApiResponse<TicketInfoResponse> updateTicketInfo(@PathVariable("ticket_info_id") Long ticketInfoId, @RequestBody TicketInfoRequest ticketUpdateRequest, @AuthenticationPrincipal AuthDetails authDetails) {
+        return ApiResponse.onSuccess(ticketService.updateTicketInfo(ticketInfoId, ticketUpdateRequest, authDetails.user()));
     }
 }

@@ -9,6 +9,8 @@ import kahlua.KahluaProject.domain.apply.Preference;
 import kahlua.KahluaProject.domain.user.UserType;
 import kahlua.KahluaProject.dto.apply.response.ApplyAdminGetResponse;
 import kahlua.KahluaProject.dto.apply.response.ApplyGetResponse;
+import kahlua.KahluaProject.dto.applyInfo.request.ApplyInfoRequest;
+import kahlua.KahluaProject.dto.applyInfo.response.ApplyInfoResponse;
 import kahlua.KahluaProject.dto.apply.response.ApplyListResponse;
 import kahlua.KahluaProject.exception.GeneralException;
 import kahlua.KahluaProject.security.AuthDetails;
@@ -24,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
 @Tag(name = "관리자(지원하기)", description = "관리자(지원하기) 페이지 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -70,4 +71,11 @@ public class AdminApplyController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(new InputStreamResource(in));
     }
+
+    @PutMapping("/info/{apply_id}")
+    @Operation(summary = "지원 정보 수정", description = "지원 정보를 수정합니다")
+    public ApiResponse<ApplyInfoResponse> updateApplyInfo(@PathVariable("apply_id") Long applyId, @RequestBody ApplyInfoRequest applyInfoRequest, @AuthenticationPrincipal AuthDetails authDetails) {
+        return ApiResponse.onSuccess(applyService.updateApplyInfo(applyId, applyInfoRequest, authDetails.user()));
+    }
 }
+

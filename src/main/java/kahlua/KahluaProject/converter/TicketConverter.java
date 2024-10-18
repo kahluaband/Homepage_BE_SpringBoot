@@ -2,11 +2,15 @@ package kahlua.KahluaProject.converter;
 
 import kahlua.KahluaProject.domain.ticket.Participants;
 import kahlua.KahluaProject.domain.ticket.Ticket;
+import kahlua.KahluaProject.domain.ticketInfo.TicketInfo;
 import kahlua.KahluaProject.dto.ticket.request.TicketCreateRequest;
 import kahlua.KahluaProject.dto.ticket.response.ParticipantsResponse;
 import kahlua.KahluaProject.dto.ticket.response.TicketCreateResponse;
 import kahlua.KahluaProject.dto.ticket.response.TicketGetResponse;
 import kahlua.KahluaProject.dto.ticket.response.TicketUpdateResponse;
+import kahlua.KahluaProject.dto.ticketInfo.request.TicketInfoRequest;
+import kahlua.KahluaProject.dto.ticketInfo.response.TicketInfoResponse;
+import kahlua.KahluaProject.vo.TicketInfoData;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,6 +84,38 @@ public class TicketConverter {
                 .meeting(ticket.getMeeting())
                 .members(memberResponses)
                 .status(ticket.getStatus())
+                .build();
+    }
+
+    public static TicketInfoData toTicketInfo(TicketInfoRequest ticketInfoRequest) {
+        return TicketInfoData.builder()
+                .title(ticketInfoRequest.title())
+                .venue(ticketInfoRequest.venue())
+                .address(ticketInfoRequest.address())
+                .dateTime(ticketInfoRequest.dateTime())
+                .freshmanPrice(ticketInfoRequest.freshmanPrice())
+                .freshmanMaxPurchase(ticketInfoRequest.freshmanMaxPurchase())
+                .generalPrice(ticketInfoRequest.generalPrice())
+                .generalMaxPurchase(ticketInfoRequest.generalMaxPurchase())
+                .bookingStartDate(ticketInfoRequest.bookingStartDate())
+                .bookingEndDate(ticketInfoRequest.bookingEndDate())
+                .build();
+    }
+
+    public static TicketInfoResponse toTicketInfoResponse(TicketInfo ticketInfo) {
+        return TicketInfoResponse.builder()
+                .id(ticketInfo.getId())
+                .posterImageUrl(ticketInfo.getPosterImageUrl())
+                .title(ticketInfo.getTicketInfoData().title())
+                .venue(ticketInfo.getTicketInfoData().venue())
+                .address(ticketInfo.getTicketInfoData().address())
+                .dateTime(ticketInfo.getTicketInfoData().dateTime())
+                .freshmanPrice(ticketInfo.getTicketInfoData().freshmanPrice())
+                .freshmanMaxPurchase(ticketInfo.getTicketInfoData().freshmanMaxPurchase())
+                .generalPrice(ticketInfo.getTicketInfoData().generalPrice())
+                .generalMaxPurchase(ticketInfo.getTicketInfoData().generalMaxPurchase())
+                .bookingStartDate(ticketInfo.getTicketInfoData().bookingStartDate())
+                .bookingEndDate(ticketInfo.getTicketInfoData().bookingEndDate())
                 .build();
     }
 }

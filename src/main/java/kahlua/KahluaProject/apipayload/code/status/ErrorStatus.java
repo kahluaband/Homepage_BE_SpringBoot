@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import javax.management.loading.MLetContent;
-
 @Getter
 @AllArgsConstructor
 public enum ErrorStatus implements BaseCode {
@@ -39,7 +37,8 @@ public enum ErrorStatus implements BaseCode {
 
     //지원하기 에러
     ALREADY_EXIST_APPLICANT(HttpStatus.BAD_REQUEST, "ALREADY EXIST APPLICANT", "이미 존재하는 지원자입니다."),
-    APPLICANT_NOT_FOUND(HttpStatus.NOT_FOUND, "APPLICANT NOT FOUND", "존지해지 않는 지원자입니다.");
+    APPLICANT_NOT_FOUND(HttpStatus.NOT_FOUND, "APPLICANT NOT FOUND", "존재하지 않는 지원자입니다."),
+    APPLY_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "APPLY INFO NOT FOUND", "존재하지 않는 지원정보 입니다." );
 
     private final HttpStatus httpStatus;
     private final String code;
