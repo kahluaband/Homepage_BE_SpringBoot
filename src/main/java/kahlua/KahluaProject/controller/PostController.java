@@ -25,7 +25,7 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("/notice/create")
+    @PostMapping("/notice/create") 
     @Operation(summary = "공지사항 작성", description = "창립제, 악기 구비 등 깔루아 전체 공지 내용을 작성합니다.")
     public ApiResponse<PostCreateResponse> createPost(@RequestBody PostCreateRequest postCreateRequest, @AuthenticationPrincipal AuthDetails authDetails) {
         PostCreateResponse postCreateResponse = postService.createPost(postCreateRequest, authDetails.user());
@@ -45,6 +45,13 @@ public class PostController {
     public ApiResponse<PostGetResponse> viewPost(@PathVariable("post_id") Long post_id, @AuthenticationPrincipal AuthDetails authDetails) {
         PostGetResponse postGetResponse = postService.viewPost(post_id, authDetails.user());
         return ApiResponse.onSuccess(postGetResponse);
+    }
+
+    @DeleteMapping("/notice/{post_id}/delete")
+    @Operation(summary = "공지사항 삭제", description = "선택한 공지글을 삭제합니다.")
+    public ApiResponse<?> deletePost(@PathVariable("post_id") Long post_id, @AuthenticationPrincipal AuthDetails authDetails) {
+        postService.delete(post_id, authDetails.user());
+        return ApiResponse.onSuccess("post delete success");
     }
 
     @GetMapping("/list")

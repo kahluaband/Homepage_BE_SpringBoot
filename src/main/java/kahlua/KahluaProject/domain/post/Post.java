@@ -52,6 +52,14 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
+    @Transient
+    private boolean isLiked;
+
+    public static Post withLikeStatus(Post post, boolean isLiked) {
+        post.isLiked = isLiked;
+        return post;
+    }
+
     public void addImage(PostImage postImage) {
         postImage = new PostImage(postImage.getUrl(), this);
         ImageUrls.add(postImage);

@@ -26,6 +26,9 @@ public class PostGetResponse {
     @Schema(description = "게시글 좋아요 수", example = "13")
     private int likes;
 
+    @Schema(description = "게시글 좋아요 여부", example = "TRUE")
+    private boolean isLiked;
+
     //게시글 댓글 수
 
     @Schema(description = "게시글 사진 리스트", example = "https://bucketname.s3.region.amazonaws.com/image1.jpg")

@@ -85,6 +85,7 @@ public class PostConverter {
                 .content(post.getContent())
                 .writer(post.getUser() != null ? post.getUser().getName() : null)
                 .likes(post.getLikes())
+                .isLiked(post.isLiked())
                 .imageUrls(getImageUrls)
                 .created_at(post.getCreatedAt())
                 .created_at(post.getUpdatedAt())
