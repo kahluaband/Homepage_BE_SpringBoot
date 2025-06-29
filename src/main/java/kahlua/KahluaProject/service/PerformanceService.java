@@ -35,7 +35,7 @@ public class PerformanceService {
         } else {
             Performance cursorPerformance = performanceRepository.findById(cursor)
                     .orElseThrow(()->new GeneralException(ErrorStatus.PERFORMANCE_NOT_FOUND));
-            LocalDateTime cursorDateTime= cursorPerformance.getPerformanceData().dateTime();
+            LocalDateTime cursorDateTime= cursorPerformance.getPerformanceData().performanceStartTime();
             performances = performanceRepository.findPerformancesOrderByDateTime(cursorDateTime, limit+1);
         }
 
