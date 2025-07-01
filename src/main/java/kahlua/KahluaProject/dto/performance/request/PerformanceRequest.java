@@ -23,8 +23,14 @@ public record PerformanceRequest(
         @Schema(description = "주소", example = "서울 마포구 월드컵북로2길 49")
         String address,
 
-        @Schema(description = "일시", example = "2024-03-02T19:00:00")
-        LocalDateTime dateTime,
+        @Schema(description = "시작 시각", example = "2024-03-02T19:00:00")
+        LocalDateTime performanceStartTime,
+
+        @Schema(description = "종료 시각", example = "2024-03-02T19:00:00")
+        LocalDateTime performanceEndTime,
+
+        @Schema(description = "입장 시각", example = "2024-03-02T19:00:00")
+        LocalDateTime entranceTime,
 
         @Schema(description = "신입생 가격", example = "0")
         String freshmanPrice,
