@@ -33,7 +33,6 @@ public class StompHandler implements ChannelInterceptor {
         StompCommand command = accessor.getCommand();
 
         if (StompCommand.CONNECT.equals(command)) { // 클라이언트가 WebSocket 연결 요청
-
             // JWT 인증
             User user = getUserByAuthorizationHeader(
                     accessor.getFirstNativeHeader("Authorization"));

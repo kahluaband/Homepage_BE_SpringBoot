@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws")
                 .setAllowedOrigins("http://localhost:8080", "http://kahluaband.com", "https://kahluaband.com", "http://localhost:3000",
                         "https://www.kahluaband.com/", "http://www.kahluaband.com/", "https://kahluabandver20-caminobelllos-projects.vercel.app",
-                        "https://api.kahluaband.com/", "http://api.kahluaband.com/")
+                        "https://api.kahluaband.com/", "http://api.kahluaband.com/","https://jiangxy.github.io/websocket-debug-tool")
                 .withSockJS(); // Web Socket 지원하지 않는 브라우저에서도 웹 소켓 사용 가능
                                // ws, wss 대신 http, https를 통해 웹 소켓 연결하도록 함
     }

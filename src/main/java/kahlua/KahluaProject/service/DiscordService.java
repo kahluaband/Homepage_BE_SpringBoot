@@ -11,12 +11,16 @@ import org.springframework.web.context.request.WebRequest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class DiscordService {
     private final RestTemplate restTemplate = new RestTemplate();
+    private static final DateTimeFormatter KST_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Seoul"));
 
     @Value("${logging.discord.webhook-url}")
     private String DISCORD_URL;
@@ -32,7 +36,7 @@ public class DiscordService {
 
     public String formatErrorMessage(Exception ex, WebRequest webRequest) {
         StringBuilder sb = new StringBuilder();
-        sb.append("🚨 **서버 에러 발생!**\n");
+        sb.append("🚨 ### 서버 에러 발생!\n");
         sb.append("**시간:** ").append(LocalDateTime.now()).append("\n");
 
         if (webRequest instanceof ServletWebRequest servletWebRequest) {
@@ -40,7 +44,6 @@ public class DiscordService {
 
             sb.append("**요청 URL:** ").append(request.getRequestURL()).append("\n");
             sb.append("**HTTP Method:** ").append(request.getMethod()).append("\n");
-            sb.append("**IP:** ").append(request.getRemoteAddr()).append("\n");
         } else {
             // 만약 서블릿 환경이 아닐 경우 fallback 처리
             sb.append("**요청 정보:** 서블릿 환경이 아님\n");

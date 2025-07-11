@@ -12,6 +12,7 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,7 +30,7 @@ public class WebSocketEventListener {
     // 연결 요청
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        logger.info("Received a new web socket connection");
+            logger.info("Received a new web socket connection");
     }
 
     // 구독 요청(입장)
@@ -38,10 +39,17 @@ public class WebSocketEventListener {
         logger.info("Received a new web socket subscribe");
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
 
-        String email = (String)getValue(accessor, "email");
-        String destination = accessor.getDestination();
-        String reservationDate = destination.substring(destination.lastIndexOf('/') + 1);
-        accessor.getSessionAttributes().put("reservationDate", reservationDate);
+        String email = (String)accessor.getSessionAttributes().get("email");
+        String reservationDate = (String) accessor.getSessionAttributes().get("reservationDate");
+
+        if (email == null) {
+            logger.warn("SUBSCRIBE 처리 생략: 세션에 email 정보가 없습니다.");
+            return;
+        }
+        if (reservationDate == null || reservationDate.isBlank()) {
+            logger.warn("SUBSCRIBE 처리 생략: 헤더에 reservationDate가 없습니다.");
+            return;
+        }
 
         logger.info("User: {} Subscribe ReservationDate : {}", email, reservationDate);
 
@@ -60,8 +68,17 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
 
-        String email = (String)getValue(accessor, "email");
-        String reservationDate = (String)getValue(accessor, "reservationDate");
+        String email = (String)accessor.getSessionAttributes().get("email");
+        String reservationDate = (String) accessor.getSessionAttributes().get("reservationDate");
+
+        if (email == null) {
+            logger.warn("DISCONNECT 처리 생략: 세션에 email 정보가 없습니다.");
+            return;
+        }
+        if (reservationDate == null || reservationDate.isBlank()) {
+            logger.warn("DISCONNECT 처리 생략: 헤더에 reservationDate가 없습니다.");
+            return;
+        }
 
         logger.info("User: {} Disconnected ReservationDate : {}", email, reservationDate);
 
@@ -72,25 +89,5 @@ public class WebSocketEventListener {
                 .build();
 
         messagingTemplate.convertAndSend("/topic/public/" + reservationDate, subRequest);
-    }
-
-    private Object getValue(StompHeaderAccessor accessor, String key) {
-        Map<String, Object> sessionAttributes = getSessionAttributes(accessor);
-        Object value = sessionAttributes.get(key);
-
-        if (Objects.isNull(value)) {
-            throw new WebSocketException(key + " 에 해당하는 값이 없습니다.");
-        }
-
-        return value;
-    }
-
-    private Map<String, Object> getSessionAttributes(StompHeaderAccessor accessor) {
-        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
-
-        if (Objects.isNull(sessionAttributes)) {
-            throw new WebSocketException("SessionAttributes가 null입니다.");
-        }
-        return sessionAttributes;
     }
 }
